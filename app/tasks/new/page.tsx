@@ -21,18 +21,17 @@ export default function NewTaskPage() {
   } = useUser();
 
 
-  const [title, setTitle] = useState("");
+  const [title, setTitle] =
+    useState("");
 
-  const [description, setDescription] = useState("");
+  const [description, setDescription] =
+    useState("");
 
   const [person, setPerson] =
     useState<UserName>("阿寶");
 
   const [reward, setReward] =
     useState("20");
-
-  const [taskMode, setTaskMode] =
-    useState("一般任務");
 
   const [dueAt, setDueAt] =
     useState("");
@@ -91,9 +90,7 @@ export default function NewTaskPage() {
 
 
     if (loading) {
-
       return;
-
     }
 
 
@@ -102,53 +99,72 @@ export default function NewTaskPage() {
 
     try {
 
-      const response = await fetch(
-        "/api/tasks",
-        {
-          method: "POST",
+      const response =
+        await fetch(
+          "/api/tasks",
+          {
+            method: "POST",
 
-          headers: {
-            "Content-Type": "application/json",
-          },
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
 
-          body: JSON.stringify({
+            body: JSON.stringify({
 
-            title: title.trim(),
+              title:
+                title.trim(),
 
-            description,
+              description,
 
-            created_by: currentUser,
+              created_by:
+                currentUser,
 
-            assign_to: person,
+              assign_to:
+                person,
 
-            reward: Number(reward),
+              reward:
+                Number(reward),
 
-            due_at: dueAt
-              ? new Date(dueAt).toISOString()
-              : null,
+              due_at:
+                dueAt
+                  ? new Date(
+                      dueAt
+                    ).toISOString()
+                  : null,
 
-            penalty: Number(penalty),
+              penalty:
+                Number(penalty),
 
-            is_daily: isDaily,
+              is_daily:
+                isDaily,
 
-            task_mode: taskMode,
+              task_mode:
+                isDaily
+                  ? "每日循環任務"
+                  : "一般任務",
 
-            status: "待完成",
+              status:
+                "待完成",
 
-          }),
-        }
-      );
+            }),
+          }
+        );
 
 
 
-      const data = await response.json();
+      const data =
+        await response.json();
 
 
       if (!response.ok) {
 
         alert(
           "建立失敗：" +
-          (data.error ?? "未知錯誤")
+          (
+            data.error ??
+            "未知錯誤"
+          )
         );
 
         return;
@@ -158,7 +174,10 @@ export default function NewTaskPage() {
 
       alert("任務建立成功！");
 
-      router.push("/tasks");
+
+      router.push(
+        "/tasks"
+      );
 
       router.refresh();
 
@@ -167,7 +186,9 @@ export default function NewTaskPage() {
 
       console.error(error);
 
-      alert("建立任務失敗");
+      alert(
+        "建立任務失敗"
+      );
 
     } finally {
 
@@ -186,7 +207,9 @@ export default function NewTaskPage() {
       <main className="min-h-screen bg-[#fffaf2] p-5">
 
         <div className="mx-auto max-w-md text-gray-400">
+
           載入身分中...
+
         </div>
 
       </main>
@@ -201,11 +224,14 @@ export default function NewTaskPage() {
 
     <main className="min-h-screen bg-[#fffaf2] p-5 pb-28 text-gray-800">
 
+
       <div className="mx-auto max-w-md">
 
 
         <h1 className="mb-6 text-3xl font-bold">
+
           ＋ 新增任務
+
         </h1>
 
 
@@ -214,17 +240,23 @@ export default function NewTaskPage() {
 
         <section className="mb-5 rounded-3xl bg-[#fff5dc] p-4">
 
+
           <p className="text-sm text-gray-500">
+
             建立者
+
           </p>
+
 
           <p className="mt-1 font-bold">
 
-            {currentUser === "國王老師"
+            {currentUser ===
+            "國王老師"
               ? "👑 國王老師"
               : "🧸 阿寶"}
 
           </p>
+
 
         </section>
 
@@ -233,37 +265,12 @@ export default function NewTaskPage() {
         <section className="rounded-3xl bg-white p-5 shadow">
 
 
+          {/* 任務名稱 */}
+
           <label className="font-bold">
-            任務模式
-          </label>
 
-
-          <select
-            className="mt-2 w-full rounded-2xl bg-gray-100 p-3"
-            value={taskMode}
-            onChange={(e) =>
-              setTaskMode(e.target.value)
-            }
-          >
-
-            <option value="一般任務">
-              一般任務
-            </option>
-
-            <option value="連鎖任務（預留）">
-              連鎖任務（預留）
-            </option>
-
-            <option value="每日循環任務">
-              每日循環任務
-            </option>
-
-          </select>
-
-
-
-          <label className="mt-5 block font-bold">
             任務名稱
+
           </label>
 
 
@@ -272,14 +279,20 @@ export default function NewTaskPage() {
             placeholder="例如：洗碗"
             value={title}
             onChange={(e) =>
-              setTitle(e.target.value)
+              setTitle(
+                e.target.value
+              )
             }
           />
 
 
 
+          {/* 任務描述 */}
+
           <label className="mt-5 block font-bold">
+
             任務描述
+
           </label>
 
 
@@ -288,14 +301,20 @@ export default function NewTaskPage() {
             placeholder="補充任務內容、注意事項..."
             value={description}
             onChange={(e) =>
-              setDescription(e.target.value)
+              setDescription(
+                e.target.value
+              )
             }
           />
 
 
 
+          {/* 指派 */}
+
           <label className="mt-5 block font-bold">
+
             指派給
+
           </label>
 
 
@@ -305,20 +324,25 @@ export default function NewTaskPage() {
             <button
               type="button"
               onClick={() =>
-                setPerson("國王老師")
+                setPerson(
+                  "國王老師"
+                )
               }
               className={`
                 rounded-2xl
                 p-3
                 font-bold
                 ${
-                  person === "國王老師"
+                  person ===
+                  "國王老師"
                     ? "bg-black text-white"
                     : "bg-gray-100"
                 }
               `}
             >
+
               👑 國王老師
+
             </button>
 
 
@@ -326,20 +350,25 @@ export default function NewTaskPage() {
             <button
               type="button"
               onClick={() =>
-                setPerson("阿寶")
+                setPerson(
+                  "阿寶"
+                )
               }
               className={`
                 rounded-2xl
                 p-3
                 font-bold
                 ${
-                  person === "阿寶"
+                  person ===
+                  "阿寶"
                     ? "bg-black text-white"
                     : "bg-gray-100"
                 }
               `}
             >
+
               🧸 阿寶
+
             </button>
 
 
@@ -347,8 +376,12 @@ export default function NewTaskPage() {
 
 
 
+          {/* 獎勵 */}
+
           <label className="mt-5 block font-bold">
+
             阿寶幣獎勵
+
           </label>
 
 
@@ -358,14 +391,20 @@ export default function NewTaskPage() {
             className="mt-2 w-full rounded-2xl bg-gray-100 p-3"
             value={reward}
             onChange={(e) =>
-              setReward(e.target.value)
+              setReward(
+                e.target.value
+              )
             }
           />
 
 
 
+          {/* 截止 */}
+
           <label className="mt-5 block font-bold">
+
             截止時間
+
           </label>
 
 
@@ -374,14 +413,20 @@ export default function NewTaskPage() {
             className="mt-2 w-full rounded-2xl bg-gray-100 p-3"
             value={dueAt}
             onChange={(e) =>
-              setDueAt(e.target.value)
+              setDueAt(
+                e.target.value
+              )
             }
           />
 
 
 
+          {/* 扣款 */}
+
           <label className="mt-5 block font-bold">
+
             逾期扣除阿寶幣
+
           </label>
 
 
@@ -391,27 +436,51 @@ export default function NewTaskPage() {
             className="mt-2 w-full rounded-2xl bg-gray-100 p-3"
             value={penalty}
             onChange={(e) =>
-              setPenalty(e.target.value)
+              setPenalty(
+                e.target.value
+              )
             }
           />
 
 
 
-          <label className="mt-5 flex items-center gap-3 font-bold">
+          {/* 每日循環 */}
+
+          <label className="mt-5 flex items-center gap-3 rounded-2xl bg-gray-50 p-4 font-bold">
+
 
             <input
               type="checkbox"
               checked={isDaily}
               onChange={(e) =>
-                setIsDaily(e.target.checked)
+                setIsDaily(
+                  e.target.checked
+                )
               }
+              className="h-5 w-5"
             />
 
-            每日循環任務
+
+            <div>
+
+              <p>
+                🔁 每日循環任務
+              </p>
+
+              <p className="mt-1 text-xs font-normal text-gray-400">
+
+                勾選後會建立為每日任務
+
+              </p>
+
+            </div>
+
 
           </label>
 
 
+
+          {/* 建立 */}
 
           <button
             onClick={createTask}
@@ -425,6 +494,8 @@ export default function NewTaskPage() {
 
             {loading
               ? "建立中..."
+              : isDaily
+              ? "🔁 建立每日任務"
               : "建立任務"}
 
           </button>
@@ -438,7 +509,9 @@ export default function NewTaskPage() {
           href="/tasks"
           className="mt-5 block text-center text-gray-500"
         >
+
           ← 返回任務列表
+
         </Link>
 
 
@@ -446,6 +519,7 @@ export default function NewTaskPage() {
 
 
       <BottomNav />
+
 
     </main>
 
