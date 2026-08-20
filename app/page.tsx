@@ -3,7 +3,8 @@ import QuickCreateTask from "@/components/QuickCreateTask";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
 import { supabase } from "@/lib/supabase";
-
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 function getIcon(name: string){
 
