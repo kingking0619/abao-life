@@ -20,6 +20,13 @@ export default function BottomNav() {
       </Link>
 
 
+      <Link href="/notes">
+        <div className="flex flex-col items-center">
+          <span>📝</span>
+          <small>記事</small>
+        </div>
+      </Link>
+
       <Link href="/wallet">
         <div className="flex flex-col items-center">
           <span>🪙</span>
@@ -32,14 +39,6 @@ export default function BottomNav() {
         <div className="flex flex-col items-center">
           <span>🛍️</span>
           <small>商城</small>
-        </div>
-      </Link>
-
-
-      <Link href="/settings">
-        <div className="flex flex-col items-center">
-          <span>⚙️</span>
-          <small>設定</small>
         </div>
       </Link>
 

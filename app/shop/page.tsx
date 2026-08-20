@@ -1,25 +1,79 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import Link from "next/link";
+
 import BottomNav from "@/components/BottomNav";
-import ExchangeButton from "@/components/ExchangeButton";
+import SortableShopList from "@/components/SortableShopList";
+import { useUser } from "@/components/UserContext";
 
 
 export default function ShopPage() {
 
-  const [items, setItems] = useState<any[]>([]);
-  const [user, setUser] = useState("阿寶");
+  const {
+    currentUser,
+    loading: userLoading,
+  } = useUser();
+
+
+  const [
+    items,
+    setItems,
+  ] = useState<any[]>([]);
+
+  const [
+    loadingItems,
+    setLoadingItems,
+  ] = useState(true);
+
 
 
   useEffect(() => {
 
     async function loadItems() {
 
-      const res = await fetch("/api/shop-items");
+      try {
 
-      const data = await res.json();
+        const res =
+          await fetch(
+            "/api/shop-items"
+          );
 
-      setItems(data);
+
+        const data =
+          await res.json();
+
+
+        if (
+          Array.isArray(data)
+        ) {
+
+          setItems(data);
+
+        } else {
+
+          setItems([]);
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "載入商城失敗:",
+          error
+        );
+
+      } finally {
+
+        setLoadingItems(
+          false
+        );
+
+      }
 
     }
 
@@ -31,82 +85,112 @@ export default function ShopPage() {
 
 
   return (
-    <main className="min-h-screen bg-[#fffaf2] p-5 text-gray-800">
+
+    <main className="min-h-screen bg-[#fffaf2] p-5 pb-28 text-gray-800">
 
 
       <div className="mx-auto max-w-md">
 
 
-        <h1 className="mb-6 text-3xl font-bold">
-          🛍️ 阿寶商城
-        </h1>
+        {/* 標題 */}
+
+        <div className="mb-6 flex items-center justify-between gap-3">
 
 
+          <h1 className="text-3xl font-bold">
 
-        <section className="mb-5 rounded-3xl bg-white p-5 shadow">
+            🛍️ 阿寶商城
 
-
-          <h2 className="font-bold">
-            兌換人
-          </h2>
+          </h1>
 
 
-          <select
-            className="mt-3 w-full rounded-2xl bg-gray-100 p-3"
-            value={user}
-            onChange={(e) => setUser(e.target.value)}
+          <Link
+            href="/shop/new"
+            className="
+              shrink-0
+              rounded-2xl
+              bg-black
+              px-4
+              py-3
+              text-sm
+              font-bold
+              text-white
+            "
           >
-
-            <option>
-              阿寶
-            </option>
-
-            <option>
-              國王老師
-            </option>
+            ＋ 新增獎勵
+          </Link>
 
 
-          </select>
+        </div>
+
+
+
+        {/* 目前兌換者 */}
+
+        <section className="mb-5 rounded-3xl bg-white p-4 shadow">
+
+
+          <p className="text-sm text-gray-500">
+            目前兌換者
+          </p>
+
+
+          <p className="mt-1 font-bold">
+
+            {userLoading
+              ? "載入中..."
+              : currentUser ===
+                "國王老師"
+              ? "👑 國王老師"
+              : currentUser ===
+                "阿寶"
+              ? "🧸 阿寶"
+              : "尚未登入"}
+
+          </p>
 
 
         </section>
 
 
 
+        {/* 商品列表 */}
 
-        <div className="space-y-4">
+        {loadingItems ? (
+
+          <section className="rounded-3xl bg-white p-5 text-gray-400 shadow">
+
+            載入商城中...
+
+          </section>
+
+        ) : items.length === 0 ? (
+
+          <section className="rounded-3xl bg-white p-5 text-center shadow">
 
 
-          {items.map((item) => (
+            <p className="text-gray-400">
+              目前沒有獎勵
+            </p>
 
-            <section
-              key={item.id}
-              className="rounded-3xl bg-white p-5 shadow"
+
+            <Link
+              href="/shop/new"
+              className="mt-4 inline-block rounded-2xl bg-black px-4 py-3 font-bold text-white"
             >
+              ＋ 建立第一個獎勵
+            </Link>
 
 
-              <h2 className="text-xl font-bold">
-                {item.name}
-              </h2>
+          </section>
 
+        ) : (
 
-              <p className="mt-3 text-2xl font-bold">
-                🪙 {item.price}
-              </p>
+          <SortableShopList
+            items={items}
+          />
 
-
-              <ExchangeButton
-                id={item.id}
-                user={user}
-              />
-
-
-            </section>
-
-          ))}
-
-
-        </div>
+        )}
 
 
       </div>
@@ -116,5 +200,7 @@ export default function ShopPage() {
 
 
     </main>
+
   );
+
 }
