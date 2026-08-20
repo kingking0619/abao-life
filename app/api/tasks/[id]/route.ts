@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { sendLineMessage } from "@/lib/line";
+
 
 
 
@@ -161,92 +163,176 @@ export async function PATCH(
 
 
     // =========================
-    // 完成回報
-    // =========================
+// 完成回報 / 重新提交
+// =========================
+
+if(body.action === "complete"){
 
 
-    if(body.action === "complete"){
-
-
-
-      const { error } = await supabase
-
-        .from("tasks")
-
-        .update({
-
-          status:"等待核可",
-
-          updated_at:new Date().toISOString(),
-
-        })
-
-        .eq("id",id);
+  // 原本是已退回
+  // 代表這次是重新提交
+  const isResubmit =
+    task.status === "已退回";
 
 
 
+  const { error } = await supabase
+
+    .from("tasks")
+
+    .update({
+
+      status:"等待核可",
+
+      updated_at:new Date().toISOString(),
+
+    })
+
+    .eq("id",id);
 
 
-      if(error){
 
 
-        return NextResponse.json(
 
-          {
-            error:error.message,
-          },
+  if(error){
 
-          {
-            status:500,
-          }
 
-        );
+    return NextResponse.json(
 
+      {
+        error:error.message,
+      },
+
+      {
+        status:500,
+      }
+
+    );
+
+
+  }
+
+
+
+
+
+  // =========================
+  // 聊天室系統訊息
+  // =========================
+
+  await supabase
+
+    .from("task_comments")
+
+    .insert([
+
+      {
+
+        task_id:task.id,
+
+        user_name:task.assign_to,
+
+        content:
+          isResubmit
+            ? "已重新提交，等待核可"
+            : "已回報完成，等待核可",
+
+        message_type:"system",
 
       }
 
+    ]);
 
 
 
 
 
+  // =========================
+  // LINE 通知建立者
+  // =========================
 
-      await supabase
-
-        .from("task_comments")
-
-        .insert([
-
-          {
-
-            task_id:task.id,
-
-            user_name:task.assign_to,
-
-            content:"已回報完成，等待核可",
-
-            message_type:"system",
-
-          }
-
-        ]);
+  try {
 
 
+    const appUrl =
+      "https://abao-life-orcin.vercel.app";
 
 
+    if(isResubmit){
 
 
-      return NextResponse.json({
+      await sendLineMessage(
 
-        success:true,
+        task.created_by,
 
-        message:"已送出核可申請",
+        `🔄 任務重新提交
 
-      });
+${task.assign_to} 已重新提交任務：
 
+📋 ${task.title}
+
+請再次進行核可。
+
+${appUrl}/tasks/${task.id}`
+
+      );
+
+
+    }else{
+
+
+      await sendLineMessage(
+
+        task.created_by,
+
+        `✅ 任務回報完成
+
+${task.assign_to} 已完成任務：
+
+📋 ${task.title}
+
+請進行核可。
+
+${appUrl}/tasks/${task.id}`
+
+      );
 
 
     }
+
+
+  }catch(lineError){
+
+
+    // LINE 發送失敗
+    // 不影響任務本身的回報
+
+    console.error(
+      "LINE 通知失敗:",
+      lineError
+    );
+
+
+  }
+
+
+
+
+
+  return NextResponse.json({
+
+    success:true,
+
+    message:
+      isResubmit
+        ? "已重新提交核可"
+        : "已送出核可申請",
+
+  });
+
+
+
+}
 
 
 

@@ -1,3 +1,4 @@
+import { sendLineMessage } from "@/lib/line";
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
@@ -576,7 +577,41 @@ const {
 
     }
 
+      // =====================
+      // LINE 通知執行者
+      // =====================
 
+      try {
+
+        const appUrl =
+          "https://abao-life-orcin.vercel.app";
+
+
+        await sendLineMessage(
+
+          task.assign_to,
+
+          `↩️ 任務被退回
+
+📋 ${task.title}
+
+${comment
+  ? `退回原因：${comment}`
+  : "請重新確認任務內容後再提交。"}
+
+${appUrl}/tasks/${task.id}`
+
+        );
+
+
+      } catch (lineError) {
+
+        console.error(
+          "LINE 退回通知失敗:",
+          lineError
+        );
+
+      }
 
     // =====================
     // 退回
