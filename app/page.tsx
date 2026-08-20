@@ -217,9 +217,9 @@ export default async function HomePage(){
 
         <div className="mb-6 flex items-center justify-between gap-3">
 
-  <h1 className="text-3xl font-bold leading-none">
-    🏠 阿寶的理想生活
-  </h1>
+  <h1 className="whitespace-nowrap text-[22px] font-bold sm:text-2xl">
+  🏠 阿寶的理想生活
+</h1>
 
 
   <div className="flex items-center gap-2">
