@@ -1,7 +1,7 @@
 import BottomNav from "@/components/BottomNav";
 import WalletAdjust from "@/components/WalletAdjust";
 import { supabase } from "@/lib/supabase";
-
+export const dynamic = "force-dynamic";
 
 function getUserIcon(name:string){
 

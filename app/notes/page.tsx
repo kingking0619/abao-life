@@ -4,7 +4,7 @@ import BottomNav from "@/components/BottomNav";
 import SortableNoteList from "@/components/SortableNoteList";
 
 import { supabase } from "@/lib/supabase";
-
+export const dynamic = "force-dynamic";
 
 export default async function NotesPage() {
 

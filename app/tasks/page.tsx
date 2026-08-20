@@ -3,6 +3,7 @@ import BottomNav from "@/components/BottomNav";
 import SortableTaskList from "@/components/SortableTaskList";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+export const dynamic = "force-dynamic";
 
 
 function isToday(date:string|null){
